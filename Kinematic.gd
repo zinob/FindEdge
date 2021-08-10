@@ -34,7 +34,7 @@ func _physics_process(delta):
 				curve.add_point(i)
 			var my_local=global_position-shape.global_position
 			var local_point = curve.get_closest_point(my_local)
-			var local_point = curve.get_closest_point(my_local)
+
 			print(my_local)
 			print("new target %s"%[local_point])
 			position = local_point  + shape.global_position
