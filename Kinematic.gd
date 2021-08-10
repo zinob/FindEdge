@@ -26,25 +26,20 @@ func _physics_process(delta):
 	if get_slide_count() > 0:
 		collision_count+=1
 		var cc:KinematicCollision2D =get_slide_collision(0)
-		if collision_count > 5: #We are a little bit stuck, nudge away
-			position+= cc.normal * 2
-		elif collision_count > 30: #We are probbably stuck, DO SOMETHING RAICAL...
+		if collision_count > 30: #We are probbably stuck, DO SOMETHING RAICAL...
 			print("stuck at" + str(position)+ " for " + str(collision_count))
 			var curve = Curve2D.new()
-			
-			var shape:CollisionPolygon2D=cc.get_collider_shape()
+			var shape:CollisionPolygon2D=cc.get_collider_shape() #There should be a check here to see of we are actually coliding with a 2Dpolly,or this will crash
 			for i in shape.polygon:
 				curve.add_point(i)
 			var my_local=global_position-shape.global_position
 			var local_point = curve.interpolate_baked(curve.get_closest_offset(my_local))
-			#curve.get_closest_point(my_local)
-
-			print(my_local)
-			print("new target %s"%[local_point])
 			position = local_point  + shape.global_position
-			print("moving to" + str(position))
-			print(curve.get_baked_length())
 			collision_count = 0
+		elif collision_count > 5: #We are a little bit stuck, nudge away
+			var escape_distance=collision_count / 5 * 2
+			print("A little bit stuck, attempting escape %s"%escape_distance)
+			position+= cc.normal * escape_distance
 	else:
 		collision_count = 0
 		velocity= Vector2.ZERO
