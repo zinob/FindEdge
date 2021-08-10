@@ -25,15 +25,19 @@ func _input(event):
 func _physics_process(delta):
 	if get_slide_count() > 0:
 		collision_count+=1
-		if collision_count > 30: #We are probbably stuck, DO SOMETHING RAICAL...
+		var cc:KinematicCollision2D =get_slide_collision(0)
+		if collision_count > 5: #We are a little bit stuck, nudge away
+			position+= cc.normal * 2
+		elif collision_count > 30: #We are probbably stuck, DO SOMETHING RAICAL...
 			print("stuck at" + str(position)+ " for " + str(collision_count))
 			var curve = Curve2D.new()
-			var cc:KinematicCollision2D =get_slide_collision(0)
+			
 			var shape:CollisionPolygon2D=cc.get_collider_shape()
 			for i in shape.polygon:
 				curve.add_point(i)
 			var my_local=global_position-shape.global_position
-			var local_point = curve.get_closest_point(my_local)
+			var local_point = curve.interpolate_baked(curve.get_closest_offset(my_local))
+			#curve.get_closest_point(my_local)
 
 			print(my_local)
 			print("new target %s"%[local_point])
